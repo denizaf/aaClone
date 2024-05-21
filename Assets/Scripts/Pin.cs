@@ -41,7 +41,6 @@ public class Pin : MonoBehaviour
         
         if (collision.gameObject.CompareTag("Pin"))
         {
-            _rb.bodyType = RigidbodyType2D.Static;
             // Change color of colliding pins
             GetComponent<SpriteRenderer>().color = Color.red;
             collision.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
