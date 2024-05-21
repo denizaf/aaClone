@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
         Invoke("RestartLevel", restartDelay);
     }
 
-    public void CollisionOccured(Vector2 collisionPoint)
+    public void CollisionOccurred(Vector2 collisionPoint)
     {
         if (_isGameOver) return;
         _isGameOver = true;

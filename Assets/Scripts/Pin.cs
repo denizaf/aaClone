@@ -14,13 +14,13 @@ public class Pin : MonoBehaviour
     private Transform _circleTransform;
     private bool _collisionDetected = false;
 
-    private void Start()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _circleTransform = GameObject.FindGameObjectWithTag("Circle").transform;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (_isMoving)
         {
@@ -46,7 +46,7 @@ public class Pin : MonoBehaviour
             collision.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
             
             //Handle game over logic,
-            GameManager.Instance.CollisionOccured(collision.contacts[0].point);
+            GameManager.Instance.CollisionOccurred(collision.contacts[0].point);
         }
         
         _isMoving = false;
@@ -60,6 +60,8 @@ public class Pin : MonoBehaviour
     private void AttachToCircle()
     {
         transform.SetParent(_circleTransform);
+        
+        LevelManager.Instance.PinAttached();
         
         // Create and configure the LineRenderer
         _lineRenderer = gameObject.AddComponent<LineRenderer>();
