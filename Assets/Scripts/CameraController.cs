@@ -43,13 +43,19 @@ public class CameraController : MonoBehaviour
         _targetPosition = new Vector3(collisionPoint.x, collisionPoint.y, transform.position.z);
         _isZooming = true;
     }
+    
+    public void ZoomToCircle(Vector3 circlePosition)
+    {
+        _targetPosition = new Vector3(circlePosition.x, circlePosition.y, transform.position.z);
+        _isZooming = true;
+    }
 
     public void ShakeCamera(float duration, float magnitude)
     {
-        StartCoroutine(ScreenShakeNow(duration, magnitude));
+        StartCoroutine(ShakeCameraNow(duration, magnitude));
     }
 
-    IEnumerator ScreenShakeNow(float duration, float magnitude)
+    private IEnumerator ShakeCameraNow(float duration, float magnitude)
     {
         Vector3 originalPosition = transform.position;
         float elapsed = 0.0f;

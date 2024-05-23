@@ -14,10 +14,12 @@ public class LevelManager : MonoBehaviour
     public Text pinsRequiredText;
     public GameObject circle;
     public GameObject pinPrefab;
+    public float transitionDuration = 2f;
     
     private int _currentLevelIndex = 0;
     private int _pinsAttached = 0;
     private LevelData _currentLevel;
+    private Color _originalCircleColor = Color.white;
 
     private void Awake()
     {
@@ -47,10 +49,10 @@ public class LevelManager : MonoBehaviour
         rotatingCircle.acceleration = _currentLevel.circleAcceleration;
         rotatingCircle.reverseDirection = _currentLevel.reverseDirection;
 
-        for (int i = 0; i < _currentLevel.initialPinPositions.Length; i++)
+        foreach (var position in _currentLevel.initialPinPositions)
         {
-            Instantiate(pinPrefab, _currentLevel.initialPinPositions[i], Quaternion.identity,
-                circle.transform);
+            var initialPin = Instantiate(pinPrefab, position, Quaternion.identity, circle.transform);
+            initialPin.GetComponent<Pin>().isInitialPin = true;
         }
         
         UpdatePinsRequiredText();
@@ -61,10 +63,76 @@ public class LevelManager : MonoBehaviour
         _pinsAttached++;
         UpdatePinsRequiredText();
 
-        /*if (_pinsAttached >= _currentLevel.pinsRequired)
+        if (_pinsAttached >= _currentLevel.pinsRequired)
         {
-            LevelCompleted();
-        }*/
+            StartCoroutine(LevelCompletedRoutine());
+        }
+    }
+
+    private IEnumerator LevelCompletedRoutine()
+    {
+        // Change color of circle and pins to green
+        ChangeColorOfCircleAndPins(Color.green);
+
+        // Zoom towards the circle
+        Camera.main.GetComponent<CameraController>().ZoomToCircle(circle.transform.position);
+
+        // Pull pins towards the circle
+        PullPinsToCircle();
+        
+        // Wait for the transition to complete
+        yield return new WaitForSeconds(transitionDuration);
+
+        // Proceed to the next level
+        _currentLevelIndex++;
+        if (_currentLevelIndex < levels.Length)
+        {
+            SetupLevel();
+        }
+        else
+        {
+            Debug.Log("All levels completed!");
+        }
+    }
+    
+    private void ChangeColorOfCircleAndPins(Color color)
+    {
+        // Change color of the circle
+        circle.GetComponent<SpriteRenderer>().color = color;
+
+        // Change color of all attached pins
+        foreach (Transform child in circle.transform)
+        {
+            var pinSpriteRenderer = child.GetComponent<SpriteRenderer>();
+            if (pinSpriteRenderer != null)
+            {
+                pinSpriteRenderer.color = color;
+            }
+        }
+    }
+    
+    private void PullPinsToCircle()
+    {
+        foreach (Transform child in circle.transform)
+        {
+            StartCoroutine(MovePinToCenter(child));
+        }
+    }
+    
+    private IEnumerator MovePinToCenter(Transform pin)
+    {
+        Vector3 startPosition = pin.position;
+        Vector3 endPosition = circle.transform.position;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < transitionDuration)
+        {
+            pin.position = Vector3.Lerp(startPosition, endPosition, elapsedTime / transitionDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        pin.position = endPosition;
     }
     
     private void UpdatePinsRequiredText()

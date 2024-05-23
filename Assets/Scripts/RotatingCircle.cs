@@ -20,23 +20,11 @@ public class RotatingCircle : MonoBehaviour
 
     private void Update()
     {
-        if (reverseDirection)
-        {
-            _currentSpeed = -Mathf.Abs(speed);
-        }
-        else
-        {
-            _currentSpeed = Mathf.Abs(speed);
-        }
-
-        if (acceleration != 0)
-        {
-            _currentSpeed += acceleration * Time.deltaTime;
-        }
-        
         if (_isRotating)
         {
-            transform.Rotate(0, 0, speed * Time.deltaTime);    
+            float rotationSpeed = reverseDirection ? -Mathf.Abs(_currentSpeed) : Mathf.Abs(_currentSpeed);
+            _currentSpeed += acceleration * Time.deltaTime;
+            transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
         }
     }
 

@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Pin : MonoBehaviour
 {
     public float speed = 20f;
+    public bool isInitialPin = false;
+    
     private bool _isMoving = true;
     private Rigidbody2D _rb;
     private LineRenderer _lineRenderer;
@@ -39,6 +42,10 @@ public class Pin : MonoBehaviour
         if (_collisionDetected) return; // Prevent multiple collisions
         _collisionDetected = true;
         
+        _isMoving = false;
+        _rb.velocity = Vector2.zero;
+        _rb.isKinematic = true;
+        
         if (collision.gameObject.CompareTag("Pin"))
         {
             // Change color of colliding pins
@@ -49,19 +56,17 @@ public class Pin : MonoBehaviour
             GameManager.Instance.CollisionOccurred(collision.contacts[0].point);
         }
         
-        _isMoving = false;
-        _rb.velocity = Vector2.zero;
-        _rb.isKinematic = true;
         AttachToCircle();
-        
-        
     }
     
     private void AttachToCircle()
     {
         transform.SetParent(_circleTransform);
-        
-        LevelManager.Instance.PinAttached();
+
+        if (!isInitialPin)
+        {
+            LevelManager.Instance.PinAttached();    
+        }
         
         // Create and configure the LineRenderer
         _lineRenderer = gameObject.AddComponent<LineRenderer>();

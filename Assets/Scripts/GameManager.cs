@@ -41,8 +41,6 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        
-        
         //Display game over UI
         //Handle game over Logic
         Debug.Log("Game over.");
