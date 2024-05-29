@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public float cameraShakeMagnitude = 0.1f;
     
     private bool _isGameOver = false;
+    private bool _canThrowPin = false;
 
     private void Awake()
     {
@@ -29,14 +30,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        _canThrowPin = false;
+    }
+
     private void Update()
     {
-        if (_isGameOver) return;
+        if (_isGameOver || !_canThrowPin) return;
         
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
             Instantiate(pinPrefab, pinSpawnPoint.position, Quaternion.identity);
+            _canThrowPin = false;
         }
+    }
+
+    public void PinLanded()
+    {
+        _canThrowPin = true;
+    }
+
+    public void DisablePinThrowing()
+    {
+        _canThrowPin = false;
+    }
+
+    public void EnablePinThrowing()
+    {
+        _canThrowPin = true;
     }
 
     public void GameOver()
@@ -61,6 +83,24 @@ public class GameManager : MonoBehaviour
     
     private void RestartLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        _isGameOver = false;
+        _canThrowPin = true;
+        LevelManager.Instance.ResetLevel();
     }
+    
+    public void SavePlayerStats()
+    {
+        PlayerPrefs.SetInt("LastPlayedLevel", LevelManager.Instance.GetCurrentLevelIndex());
+        /*PlayerPrefs.SetInt("PinsShot", pinsShot);
+        PlayerPrefs.SetInt("PinsLanded", pinsLanded);
+        PlayerPrefs.SetInt("LevelsPassed", levelsPassed);
+        PlayerPrefs.SetInt("LevelsFailed", levelsFailed);
+        PlayerPrefs.Save();*/
+    }
+
+    private void OnApplicationQuit()
+    {
+        SavePlayerStats();
+    }
+
 }

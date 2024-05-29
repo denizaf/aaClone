@@ -12,6 +12,7 @@ public class Pin : MonoBehaviour
     public bool isInitialPin = false;
     
     private bool _isMoving = true;
+    private bool _isPlaced = false;
     private Rigidbody2D _rb;
     private LineRenderer _lineRenderer;
     private Transform _circleTransform;
@@ -25,6 +26,12 @@ public class Pin : MonoBehaviour
 
     private void Update()
     {
+        if (isInitialPin && !_isPlaced)
+        {
+            // Do not move if it's an initial pin and not yet placed
+            return;
+        }
+        
         if (_isMoving)
         {
             transform.Translate(Vector2.up * speed * Time.deltaTime);   
@@ -45,9 +52,19 @@ public class Pin : MonoBehaviour
         _isMoving = false;
         _rb.velocity = Vector2.zero;
         _rb.isKinematic = true;
+
+        if (collision.gameObject.CompareTag("Circle"))
+        {
+            if (!isInitialPin)
+            {
+                GameManager.Instance.PinLanded();   
+            }
+            AttachToCircle();
+        }
         
         if (collision.gameObject.CompareTag("Pin"))
         {
+            transform.SetParent(_circleTransform);
             // Change color of colliding pins
             GetComponent<SpriteRenderer>().color = Color.red;
             collision.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
@@ -55,8 +72,12 @@ public class Pin : MonoBehaviour
             //Handle game over logic,
             GameManager.Instance.CollisionOccurred(collision.contacts[0].point);
         }
-        
-        AttachToCircle();
+    }
+    
+    public void PlacePin(Vector3 position)
+    {
+        transform.position = position;
+        _isPlaced = true;  // Mark as placed
     }
     
     private void AttachToCircle()
@@ -65,7 +86,7 @@ public class Pin : MonoBehaviour
 
         if (!isInitialPin)
         {
-            LevelManager.Instance.PinAttached();    
+            LevelManager.Instance.PinAttached();
         }
         
         // Create and configure the LineRenderer

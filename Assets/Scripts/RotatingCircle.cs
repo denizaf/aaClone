@@ -32,4 +32,10 @@ public class RotatingCircle : MonoBehaviour
     {
         _isRotating = false;
     }
+
+    public void StartRotation()
+    {
+        _currentSpeed = speed;
+        _isRotating = true;
+    }
 }
