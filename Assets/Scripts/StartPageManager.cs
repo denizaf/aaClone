@@ -12,6 +12,7 @@ public class StartPageManager : MonoBehaviour
     public Button statsButton;
     public Button statsBackButton;
     
+    public GameObject startPanel;
     public GameObject statsPanel;
     public GameObject levelsPanel;
     
@@ -31,7 +32,9 @@ public class StartPageManager : MonoBehaviour
         soundButton.onClick.AddListener(ToggleSound);
         continueButton.onClick.AddListener(ContinueGame);
         levelsButton.onClick.AddListener(ShowLevels);
+        levelsBackButton.onClick.AddListener(HideLevels);
         statsButton.onClick.AddListener(ShowStats);
+        statsBackButton.onClick.AddListener(HideStats);
 
         LoadPlayerStats();
         UpdateStatsUI();
@@ -50,7 +53,8 @@ public class StartPageManager : MonoBehaviour
 
     private void ContinueGame()
     {
-        //
+        startPanel.gameObject.SetActive(false);
+        GameManager.Instance.EnablePinThrowing();
     }
 
     private void ShowLevels()
