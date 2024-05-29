@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using System.IO;
 
 public class LevelManager : MonoBehaviour
 {
@@ -12,10 +9,12 @@ public class LevelManager : MonoBehaviour
 
     public LevelData[] levels;
     public Text pinsRequiredText;
+    public Text levelText;
     public GameObject circle;
     public GameObject pinPrefab;
     public float transitionDuration = 2f;
     
+    private string _levelFilePath;
     private int _currentLevelIndex = 0;
     private int _pinsAttached = 0;
     private LevelData _currentLevel;
@@ -31,6 +30,9 @@ public class LevelManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        _levelFilePath = "Assets/Data/Level_Data.txt";
+        LoadCurrentLevel();
     }
 
     private void Start()
@@ -38,24 +40,81 @@ public class LevelManager : MonoBehaviour
         SetupLevel();
     }
 
+    public int GetCurrentLevelIndex()
+    {
+        return _currentLevelIndex;
+    }
+    
+    private void LoadCurrentLevel()
+    {
+        if (File.Exists(_levelFilePath))
+        {
+            string levelData = File.ReadAllText(_levelFilePath);
+            int.TryParse(levelData, out _currentLevelIndex);
+        }
+        else
+        {
+            _currentLevelIndex = 0; // Default to level 0 if file does not exist
+        }
+    }
+    
+    private void SaveCurrentLevel()
+    {
+        File.WriteAllText(_levelFilePath, _currentLevelIndex.ToString());
+    }
+
     private void SetupLevel()
     {
         _pinsAttached = 0;
         _currentLevel = levels[_currentLevelIndex];
-
+        levelText.text = ("Level\n" + _currentLevel.levelNumber);
+        
         //Initialize the circle based on level data
         var rotatingCircle = circle.GetComponent<RotatingCircle>();
         rotatingCircle.speed = _currentLevel.circleSpeed;
         rotatingCircle.acceleration = _currentLevel.circleAcceleration;
         rotatingCircle.reverseDirection = _currentLevel.reverseDirection;
-
-        foreach (var position in _currentLevel.initialPinPositions)
-        {
-            var initialPin = Instantiate(pinPrefab, position, Quaternion.identity, circle.transform);
-            initialPin.GetComponent<Pin>().isInitialPin = true;
-        }
+        rotatingCircle.StartRotation();
         
+        // Calculate and place initial pins based on angles
+        float circleRadius = circle.GetComponent<CircleCollider2D>().radius;
+        foreach (float angle in _currentLevel.initialPinAngles)
+        {
+            float radian = angle * Mathf.Deg2Rad; // Convert degrees to radians
+            Vector3 pinPosition = new Vector3(
+                circle.transform.position.x + circleRadius * Mathf.Cos(radian),
+                circle.transform.position.y + circleRadius * Mathf.Sin(radian),
+                0
+            );
+            var initialPin = Instantiate(pinPrefab, pinPosition, Quaternion.identity, circle.transform).GetComponent<Pin>();
+            initialPin.speed = 0;
+            initialPin.isInitialPin = true;  // Mark this pin as an initial pin
+            initialPin.PlacePin(pinPosition);  // Place the pin without moving
+        }
+
         UpdatePinsRequiredText();
+    }
+    
+    private void ClearPreviousPins()
+    {
+        foreach (Transform child in circle.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void ResetColors()
+    {
+        circle.GetComponent<SpriteRenderer>().color = _originalCircleColor;
+        
+        foreach (Transform child in circle.transform)
+        {
+            var pinSpriteRenderer = child.GetComponent<SpriteRenderer>();
+            if (pinSpriteRenderer != null)
+            {
+                pinSpriteRenderer.color = Color.black;
+            }
+        }
     }
 
     public void PinAttached()
@@ -65,12 +124,16 @@ public class LevelManager : MonoBehaviour
 
         if (_pinsAttached >= _currentLevel.pinsRequired)
         {
+            GameManager.Instance.DisablePinThrowing();
             StartCoroutine(LevelCompletedRoutine());
         }
     }
 
     private IEnumerator LevelCompletedRoutine()
     {
+        // Disable pin throwing
+        GameManager.Instance.DisablePinThrowing();
+        
         // Change color of circle and pins to green
         ChangeColorOfCircleAndPins(Color.green);
 
@@ -85,14 +148,13 @@ public class LevelManager : MonoBehaviour
 
         // Proceed to the next level
         _currentLevelIndex++;
-        if (_currentLevelIndex < levels.Length)
+        SaveCurrentLevel();
+        
+        if (_currentLevelIndex >= levels.Length)
         {
-            SetupLevel();
+            _currentLevelIndex = 0; // Loop back to the first level or handle game completion
         }
-        else
-        {
-            Debug.Log("All levels completed!");
-        }
+        SetupLevel();
     }
     
     private void ChangeColorOfCircleAndPins(Color color)
@@ -109,6 +171,19 @@ public class LevelManager : MonoBehaviour
                 pinSpriteRenderer.color = color;
             }
         }
+    }
+    
+    public void ResetLevel()
+    {
+        ClearPreviousPins();
+        ResetColors();
+        ResetCamera();
+        SetupLevel();
+    }
+    
+    private void ResetCamera()
+    {
+        Camera.main.GetComponent<CameraController>().ResetCamera();
     }
     
     private void PullPinsToCircle()
@@ -138,15 +213,5 @@ public class LevelManager : MonoBehaviour
     private void UpdatePinsRequiredText()
     {
         pinsRequiredText.text = (_currentLevel.pinsRequired - _pinsAttached).ToString();
-    }
-
-    private void LevelCompleted()
-    {
-        _currentLevelIndex++;
-        if (_currentLevelIndex < levels.Length)
-        {
-            SetupLevel();
-        }
-        SetupLevel();
     }
 }
