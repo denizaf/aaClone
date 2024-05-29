@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c3f83179b4af9c44ab9e3ef9c02e37f, type: 3}
-  m_Name: Level1 1
+  m_Name: Level1 4
   m_EditorClassIdentifier: 
-  levelNumber: 2
+  levelNumber: 5
   pinsRequired: 10
   initialPinAngles:
   - 0
@@ -23,6 +23,6 @@ MonoBehaviour:
   - 135
   - 225
   - 315
-  circleSpeed: 1
+  circleSpeed: 100
   circleAcceleration: 0
-  reverseDirection: 0
+  reverseDirection: 1

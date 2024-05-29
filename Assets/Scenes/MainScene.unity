@@ -907,7 +907,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125562502}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.014663388, y: 0.014663388, z: 0.014663388}
   m_ConstrainProportionsScale: 0
@@ -916,7 +916,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000030517578}
   m_SizeDelta: {x: 68.197, y: 68.197}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1125562504
@@ -1627,7 +1627,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1480845450}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.022025887, y: 0.022025887, z: 0.022025887}
   m_ConstrainProportionsScale: 0
@@ -1762,6 +1762,7 @@ MonoBehaviour:
   levelsBackButton: {fileID: 1401742212}
   statsButton: {fileID: 27163249}
   statsBackButton: {fileID: 1155135037}
+  startPanel: {fileID: 1863505484}
   statsPanel: {fileID: 1670443483}
   levelsPanel: {fileID: 1440148944}
   pinsShotText: {fileID: 1646240204}
@@ -2232,6 +2233,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b46f13f2f08f646478f987280be4dfdd, type: 2}
   - {fileID: 11400000, guid: 50190befa3697b44393cd71d16e62635, type: 2}
   - {fileID: 11400000, guid: 163e2e0aedd3be74292179215d2a5c51, type: 2}
+  - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
+  - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
+  - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
   - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
   pinsRequiredText: {fileID: 1125562504}
   levelText: {fileID: 1480845451}
