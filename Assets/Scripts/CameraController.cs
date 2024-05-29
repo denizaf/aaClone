@@ -9,11 +9,15 @@ public class CameraController : MonoBehaviour
     public float moveSpeed = 2f;
     public float targetOrthographicSize = 3f;
     private Vector3 _targetPosition;
+    private Vector3 _originalPosition;
+    private float _originalOrthographicSize;
     private bool _isZooming = false;
     private float _restartDelay = 1.5f;
 
     private void Start()
     {
+        _originalPosition = transform.position;
+        _originalOrthographicSize = Camera.main.orthographicSize;
         _targetPosition = transform.position;
     }
 
@@ -78,5 +82,11 @@ public class CameraController : MonoBehaviour
     private void CallGameOver()
     {
         GameManager.Instance.GameOver();
+    }
+    
+    public void ResetCamera()
+    {
+        transform.position = _originalPosition;
+        Camera.main.orthographicSize = _originalOrthographicSize;
     }
 }
