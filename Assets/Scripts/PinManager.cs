@@ -133,18 +133,25 @@ public class PinManager : MonoBehaviour
 
     private IEnumerator MovePinToCenter(Transform pin)
     {
+        if (pin == null) yield break; // Check if the pin is null before starting
+        
         Vector3 startPosition = pin.position;
         Vector3 endPosition = _circle.transform.position;
         float elapsedTime = 0f;
 
         while (elapsedTime < transitionDuration)
         {
+            if (pin == null) yield break; // Check if the pin is null inside the loop
+            
             pin.position = Vector3.Lerp(startPosition, endPosition, elapsedTime / transitionDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        pin.position = endPosition;
+        if (pin != null) // Final check before setting the position
+        {
+            pin.position = endPosition;
+        }
     }
 
     public void ThrowPin()
