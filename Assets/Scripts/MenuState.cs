@@ -12,7 +12,12 @@ public class MenuState : IGameState
     public void Enter()
     {
         Debug.Log("Entering Menu State");
+        int currentLevel = LevelManager.Instance.GetCurrentLevelIndex() + 1;
+        UIManager.Instance.UpdateLevelButton(currentLevel);
+        
         UIManager.Instance.ShowStartPanel();
+        UIManager.Instance.HideGameOverPanel();
+        UIManager.Instance.HideLevelCompletedPanel();
     }
 
     public void Update()
