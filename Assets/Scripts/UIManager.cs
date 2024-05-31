@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour
     public Button levelsBackButton;
     public Button statsButton;
     public Button statsBackButton;
+    public Text currentLevelText;
     
     //Game Over Panel
     public Button restartButton;
@@ -63,6 +64,11 @@ public class UIManager : MonoBehaviour
         //level completed panel
         nextLevelButton.onClick.AddListener(OnNextLevelButtonPressed);
         menuButton2.onClick.AddListener(OnMenuButtonPressed);
+    }
+    
+    public void UpdateLevelButton(int level)
+    {
+        currentLevelText.text = "Level\n" + level;
     }
 
     public void ShowStartPanel()
