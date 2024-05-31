@@ -76,23 +76,19 @@ public class LevelManager : MonoBehaviour
         rotatingCircle.reverseDirection = _currentLevel.reverseDirection;
         rotatingCircle.StartRotation();
         
-        // Calculate and place initial pins based on angles
-        float circleRadius = circle.GetComponent<CircleCollider2D>().radius;
-        foreach (float angle in _currentLevel.initialPinAngles)
-        {
-            float radian = angle * Mathf.Deg2Rad; // Convert degrees to radians
-            Vector3 pinPosition = new Vector3(
-                circle.transform.position.x + circleRadius * Mathf.Cos(radian),
-                circle.transform.position.y + circleRadius * Mathf.Sin(radian),
-                0
-            );
-            var initialPin = Instantiate(pinPrefab, pinPosition, Quaternion.identity, circle.transform).GetComponent<Pin>();
-            initialPin.speed = 0;
-            initialPin.isInitialPin = true;  // Mark this pin as an initial pin
-            initialPin.PlacePin(pinPosition);  // Place the pin without moving
-        }
+        PinManager.Instance.Initialize(circle, _currentLevel);
 
         UpdatePinsRequiredText();
+    }
+    
+    public bool IsGameOver()
+    {
+        return GameManager.Instance.CheckGameOverCondition();
+    }
+
+    public bool IsLevelCompleted()
+    {
+        return _pinsAttached >= _currentLevel.pinsRequired;
     }
     
     private void ClearPreviousPins()
@@ -122,7 +118,7 @@ public class LevelManager : MonoBehaviour
         _pinsAttached++;
         UpdatePinsRequiredText();
 
-        if (_pinsAttached >= _currentLevel.pinsRequired)
+        if (IsLevelCompleted())
         {
             GameManager.Instance.DisablePinThrowing();
             StartCoroutine(LevelCompletedRoutine());
@@ -135,48 +131,24 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.DisablePinThrowing();
         
         // Change color of circle and pins to green
-        ChangeColorOfCircleAndPins(Color.green);
+        PinManager.Instance.ChangeColorOfCircleAndPins(Color.green);
 
         // Zoom towards the circle
         Camera.main.GetComponent<CameraController>().ZoomToCircle(circle.transform.position);
 
         // Pull pins towards the circle
-        PullPinsToCircle();
+        PinManager.Instance.PullPinsToCircle();
         
         // Wait for the transition to complete
         yield return new WaitForSeconds(transitionDuration);
-
-        // Proceed to the next level
-        _currentLevelIndex++;
-        SaveCurrentLevel();
         
-        if (_currentLevelIndex >= levels.Length)
-        {
-            _currentLevelIndex = 0; // Loop back to the first level or handle game completion
-        }
-        SetupLevel();
+        GameManager.Instance.ChangeState(new LevelCompletedState(GameManager.Instance));
     }
     
-    private void ChangeColorOfCircleAndPins(Color color)
-    {
-        // Change color of the circle
-        circle.GetComponent<SpriteRenderer>().color = color;
-
-        // Change color of all attached pins
-        foreach (Transform child in circle.transform)
-        {
-            var pinSpriteRenderer = child.GetComponent<SpriteRenderer>();
-            if (pinSpriteRenderer != null)
-            {
-                pinSpriteRenderer.color = color;
-            }
-        }
-    }
     
     public void ResetLevel()
     {
-        ClearPreviousPins();
-        ResetColors();
+        PinManager.Instance.ResetPins();
         ResetCamera();
         SetupLevel();
     }
@@ -186,32 +158,21 @@ public class LevelManager : MonoBehaviour
         Camera.main.GetComponent<CameraController>().ResetCamera();
     }
     
-    private void PullPinsToCircle()
-    {
-        foreach (Transform child in circle.transform)
-        {
-            StartCoroutine(MovePinToCenter(child));
-        }
-    }
-    
-    private IEnumerator MovePinToCenter(Transform pin)
-    {
-        Vector3 startPosition = pin.position;
-        Vector3 endPosition = circle.transform.position;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < transitionDuration)
-        {
-            pin.position = Vector3.Lerp(startPosition, endPosition, elapsedTime / transitionDuration);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        pin.position = endPosition;
-    }
-    
-    private void UpdatePinsRequiredText()
+    public void UpdatePinsRequiredText()
     {
         pinsRequiredText.text = (_currentLevel.pinsRequired - _pinsAttached).ToString();
+    }
+    
+    public void LoadNextLevel()
+    {
+        _currentLevelIndex++;
+        SaveCurrentLevel();
+
+        if (_currentLevelIndex >= levels.Length)
+        {
+            _currentLevelIndex = 0; // Loop back to the first level or handle game completion
+        }
+
+        ResetLevel();
     }
 }
