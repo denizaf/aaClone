@@ -23,6 +23,6 @@ MonoBehaviour:
   - 135
   - 225
   - 315
-  circleSpeed: 1
+  circleSpeed: 100
   circleAcceleration: 0
   reverseDirection: 0
