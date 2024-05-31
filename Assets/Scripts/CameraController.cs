@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         _originalPosition = transform.position;
-        _originalOrthographicSize = Camera.main.orthographicSize;
+        _originalOrthographicSize = Camera.main?.orthographicSize ?? 0;
         _targetPosition = transform.position;
     }
 
@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
             {
                 _isZooming = false;
                 // Call GameOver after a delay
-                Invoke("CallGameOver", _restartDelay);
+                //Invoke("CallGameOver", _restartDelay);
             }
         }
     }
@@ -87,6 +87,9 @@ public class CameraController : MonoBehaviour
     public void ResetCamera()
     {
         transform.position = _originalPosition;
-        Camera.main.orthographicSize = _originalOrthographicSize;
+        if (Camera.main != null)
+        {
+            Camera.main.orthographicSize = _originalOrthographicSize;
+        }
     }
 }
