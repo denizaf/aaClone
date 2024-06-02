@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
     public Text pinsRequiredText;
     public Text levelText;
     public GameObject circle;
-    public GameObject pinPrefab;
+    //public GameObject pinPrefab;
     public float transitionDuration = 2f;
     
     private string _levelFilePath;
@@ -81,38 +81,16 @@ public class LevelManager : MonoBehaviour
         UpdatePinsRequiredText();
     }
     
-    public bool IsGameOver()
+    /*public bool IsGameOver()
     {
         return GameManager.Instance.CheckGameOverCondition();
-    }
+    }*/
 
     public bool IsLevelCompleted()
     {
         return _pinsAttached >= _currentLevel.pinsRequired;
     }
     
-    private void ClearPreviousPins()
-    {
-        foreach (Transform child in circle.transform)
-        {
-            Destroy(child.gameObject);
-        }
-    }
-
-    private void ResetColors()
-    {
-        circle.GetComponent<SpriteRenderer>().color = _originalCircleColor;
-        
-        foreach (Transform child in circle.transform)
-        {
-            var pinSpriteRenderer = child.GetComponent<SpriteRenderer>();
-            if (pinSpriteRenderer != null)
-            {
-                pinSpriteRenderer.color = Color.black;
-            }
-        }
-    }
-
     public void PinAttached()
     {
         _pinsAttached++;
@@ -120,6 +98,9 @@ public class LevelManager : MonoBehaviour
 
         if (IsLevelCompleted())
         {
+            _currentLevelIndex++;
+            SaveCurrentLevel();
+            
             GameManager.Instance.DisablePinThrowing();
             StartCoroutine(LevelCompletedRoutine());
         }
@@ -165,9 +146,6 @@ public class LevelManager : MonoBehaviour
     
     public void LoadNextLevel()
     {
-        _currentLevelIndex++;
-        SaveCurrentLevel();
-
         if (_currentLevelIndex >= levels.Length)
         {
             _currentLevelIndex = 0; // Loop back to the first level or handle game completion

@@ -1356,6 +1356,7 @@ MonoBehaviour:
   levelsBackButton: {fileID: 1401742212}
   statsButton: {fileID: 27163249}
   statsBackButton: {fileID: 1155135037}
+  currentLevelText: {fileID: 928495113}
   restartButton: {fileID: 1210618028}
   menuButton: {fileID: 1829797463}
   nextLevelButton: {fileID: 77937141}
@@ -3473,13 +3474,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 50190befa3697b44393cd71d16e62635, type: 2}
   - {fileID: 11400000, guid: 163e2e0aedd3be74292179215d2a5c51, type: 2}
   - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
-  - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
-  - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
-  - {fileID: 11400000, guid: 007d823e984bd1d46b5aef9e50857e7f, type: 2}
+  - {fileID: 11400000, guid: ffb3be1e1781d704fa66388892fa1af5, type: 2}
+  - {fileID: 11400000, guid: f99822081f2583a4fa958d30a4493a1b, type: 2}
+  - {fileID: 11400000, guid: acd9e920a36859746a0d6e4d042ae11b, type: 2}
+  - {fileID: 11400000, guid: cc30be7dcd2f3a74eabb2ed93019dc79, type: 2}
+  - {fileID: 11400000, guid: de8f91d783e71dc46a512d3a46b77633, type: 2}
   pinsRequiredText: {fileID: 1125562504}
   levelText: {fileID: 1480845451}
   circle: {fileID: 909733715}
-  pinPrefab: {fileID: 2720481292602075309, guid: eece1a7b26961b947b2bc5a081fd3b7d, type: 3}
   transitionDuration: 2
 --- !u!4 &1840328468
 Transform:

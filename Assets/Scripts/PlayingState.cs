@@ -13,6 +13,7 @@ public class PlayingState : IGameState
     {
         Debug.Log("Entering Playing State.");
         _gameManager.EnablePinThrowing();
+        _gameManager.ResetGameState();
         
         UIManager.Instance.HideStartPanel();
         UIManager.Instance.HideGameOverPanel();

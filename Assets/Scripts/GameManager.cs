@@ -162,9 +162,14 @@ public class GameManager : MonoBehaviour
         SavePlayerStats();
     }
 
-    public void GoToStartPage()
+    public void ResetGameState()
     {
-        ChangeState(new MenuState(this));
+        _isGameOver = false;
+        _canThrowPin = true;
+        LevelManager.Instance.ResetLevel();
+        // Hide any UI panels that might be showing
+        UIManager.Instance.HideGameOverPanel();
+        UIManager.Instance.HideLevelCompletedPanel();
     }
 
     public bool IsGameOver()
